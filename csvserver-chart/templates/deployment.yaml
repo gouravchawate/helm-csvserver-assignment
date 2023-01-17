@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "csvserver.labels" . | indent 4 }}
+  name: {{ include "csvserver.name" . }}
+spec:
+  replicas: {{ .Values.csvserver.replicas }}
+  selector:
+    matchLabels:
+      {{- include "csvserver.labels" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "csvserver.labels" . | indent 8 }}
+    spec:
+      volumes:
+      - name: inputdata-vol
+        configMap:
+          name: {{ include "csvserver.name" . }}
+      containers:
+      - image: {{ .Values.csvserver.image }}
+        name: {{ include "csvserver.name" . }}
+        env:
+         - name: {{ .Values.csvserver.env.name }}
+           value: {{ .Values.csvserver.env.value }}
+        volumeMounts:
+        - mountPath: /csvserver/inputdata
+          subPath: inputdata
+          name: inputdata-vol
+            

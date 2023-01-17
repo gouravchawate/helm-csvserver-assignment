@@ -1,0 +1,24 @@
+csvserver:
+  replicas: 1
+  image: infracloudio/csvserver:latest
+  env:
+    name: CSVSERVER_BORDER
+    value: Blue
+  service:
+    type: ClusterIP
+    port: 80
+    protocol: TCP
+    targetport: 9300
+
+prometheus:
+  scrapeinterval: 15s
+  jobname: csvserver
+  replicas: 1
+  image: prom/prometheus
+  pvcname: prometheus-data
+  pvcstoragesize: 1Gi
+  service: 
+    type: ClusterIP
+    targetPorts: 9090
+    port: 9090
+    protocol: TCP

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    {{- include "csvserver.labels" . | indent 4 }}
+  name: {{ include "csvserver.name" . }}
+spec:
+  type: {{ .Values.csvserver.service.type }}
+  ports:
+  - port: {{ .Values.csvserver.service.port }}
+    protocol: {{ .Values.csvserver.service.protocol }}
+    targetPort: {{ .Values.csvserver.service.targetport }}
+  selector:
+    {{- include "csvserver.labels" . | indent 4 }}
+

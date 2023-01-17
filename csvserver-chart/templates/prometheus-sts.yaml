@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    {{- include "prometheus.labels" . | indent 4 }}
+  name: {{ include "prometheus.name" . }}
+spec:
+  replicas: {{ .Values.prometheus.replicas }}
+  selector:
+    matchLabels:
+      {{- include "prometheus.labels" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "prometheus.labels" . | indent 8 }}
+    spec:
+      volumes:
+      - name: promconfig-vol
+        configMap:
+          name: {{ include "prometheus.name" . }}
+      containers:
+      - image: {{ .Values.prometheus.image }}
+        name: {{ include "prometheus.name" . }}
+        volumeMounts:
+        - mountPath: /etc/prometheus/prometheus.yml
+          subPath: prometheus.yml
+          name: promconfig-vol
+        - mountPath: /prometheus
+          name: {{ .Values.prometheus.pvcname }}
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .Values.prometheus.pvcname }}
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ .Values.prometheus.pvcstoragesize }}    
+            

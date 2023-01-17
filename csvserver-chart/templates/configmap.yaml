@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+   {{- (.Files.Glob "configmap/*").AsConfig | nindent 2 }}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: {{ include "csvserver.name" . }}
